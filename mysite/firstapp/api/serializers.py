@@ -2,6 +2,8 @@ from rest_framework import serializers
 from firstapp.models import Community, Post_Type
 
 
+
+# Building model serializers for Community and Post Type
 class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community 
