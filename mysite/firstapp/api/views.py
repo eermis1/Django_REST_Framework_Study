@@ -26,5 +26,3 @@ def api_community_detail_view(request,community_id):
     if request.method == "GET":
         serializer = CommunitySerializer(community)
         return Response(serializer.data)
-
- 
