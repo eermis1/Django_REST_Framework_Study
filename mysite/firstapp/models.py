@@ -5,6 +5,7 @@ from django.contrib.auth.models import Permission, User
 from django.conf import settings
 import datetime
 from django.utils import timezone
+from django.utils.text import slugify
 
 
 class Community(models.Model):
@@ -39,7 +40,7 @@ class Community(models.Model):
         
         # If Self.id exists then it is a modification --> modification date = timezone.now()
         self.community_modification_date = timezone.now()
-        self.community_slug = self.get_slug
+        self.community_slug = self.get_slug()
 
         return super(Community, self).save(*args,**kwargs)
 
