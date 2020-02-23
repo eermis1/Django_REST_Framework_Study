@@ -13,18 +13,39 @@ class Community(models.Model):
     community_description = models.CharField(max_length=200)
     community_tag = models.CharField(max_length=150)
     community_tag_wiki = models.CharField(max_length=400)
-    community_creation_date = models.DateTimeField(auto_now_add=True, blank=True, null = True)
-    community_slug = models.SlugField(blank=True, unique=True)
-    
+    community_creation_date = models.DateTimeField(editable=False, blank=True)
+    community_modification_date = models.DateTimeField(editable=False, blank=True)
+    community_slug = models.SlugField(max_length=150, unique=True, editable=False) 
+    # Defining Max Length is critical as it raises "DatabaseError: value too long for type character varying(100)" if max_length not specified 
+    community_image = models.ImageField(upload_to = "media/community") # To do so, pip install Pillow
+
+    def get_slug(self):
+        # Unique slug creation
+        # Replace turkish characters with english ones. 
+        slug = slugify(self.community_name.replace("ı","i"))
+        unique = slug 
+        number = 1
+
+        while Community.objects.filter(community_slug=unique).exists():
+            unique  = "{}-{}".format(slug,number) # If slug "evren" exists then make new slug as "evren-1"
+            number =+ 1
+
+        return unique
+
+    def save(self, *args, **kwargs):
+        # If Self.id does not exist then it is a creation --> creation date = timezone.now()
+        if not self.id:
+            self.community_creation_date = timezone.now()
+        
+        # If Self.id exists then it is a modification --> modification date = timezone.now()
+        self.community_modification_date = timezone.now()
+        self.community_slug = self.get_slug
+
+        return super(Community, self).save(*args,**kwargs)
+
+
     def __str__ (self):
         return ("Community ID : " + str(self.id) +  "     " + "Community Name : " + self.community_name)
-
-    def get_absolute_url(self):
-         return reverse('community:community_posttype_detail', kwargs={"pk" : self.pk})
-
-    def was_published_recently(self):
-        #Last 2 Days Of Communities --> Recent
-        return self.community_creation_date >= timezone.now()-datetime.delta(days=2)
     
 class Post_Type(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
