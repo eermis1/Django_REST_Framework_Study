@@ -10,6 +10,9 @@ from rest_framework.generics import (ListAPIView,
 from firstapp.models import Community, Post_Type
 from firstapp.api.serializers import CommunitySerializer, Post_TypeSerializer
 
+
+# -------------------------------------------------- List/Index View --------------------------------------------------------------------
+
 # List of all communities, LISTAPIVIEW use case
 class api_community_list_view(ListAPIView):
     
@@ -34,11 +37,11 @@ def api_community_detail_view(request,community_id):
         serializer = CommunitySerializer(community)
         return Response(serializer.data)
 
-# Class based view.
-# class api_community_detail_view(RetrieveAPIView):
-#     queryset = Community.objects.all()
-#     serializer_class = CommunitySerializer
-#     lookup_field = 'slug'
+# Class based view.
+class api_community_detail_view_class(RetrieveAPIView):
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer
+    lookup_field = 'pk' # Pk has to be added to URLs as well. 
 
 
 # -------------------------------------------------- Update View --------------------------------------------------------------------
