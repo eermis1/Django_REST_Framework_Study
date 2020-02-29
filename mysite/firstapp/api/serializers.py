@@ -30,3 +30,10 @@ class CommunitySerializer_ForList(serializers.ModelSerializer):
     class Meta:
         model = Community 
         fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image", "community_modifiedby"]
+
+# --------------------------------------------------  Delete View Serializers -------------------------------------------------------
+
+class CommunitySerializer_ForDelete(serializers.ModelSerializer):
+    class Meta:
+        model = Community 
+        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image", "community_modifiedby"]

@@ -2,7 +2,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from firstapp.models import Community, Post_Type
-from django.contrib.auth import authenticate, login, logout
+
+from firstapp.api.permissions import IsOwner
+from rest_framework.permissions import (
+                                        IsAuthenticated,
+                                        IsAdminUser
+                                        )
 
 from rest_framework.generics import (ListAPIView,
                                      RetrieveAPIView,
@@ -13,7 +18,8 @@ from rest_framework.generics import (ListAPIView,
 from firstapp.api.serializers import (CommunitySerializer_ForCreate, 
                                       CommunitySerializer_ForDetail, 
                                       CommunitySerializer_ForUpdate, 
-                                      CommunitySerializer_ForList)
+                                      CommunitySerializer_ForList,
+                                      CommunitySerializer_ForDelete)
 
 # -------------------------------------------------- List/Index View --------------------------------------------------------------------
 
@@ -73,7 +79,9 @@ class api_community_update_view_class(RetrieveUpdateAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer_ForUpdate
     lookup_field = 'pk'
+    permission_classes = [IsOwner]
 
+    # Modified By Feature
     def perform_update(self, serializer):
         serializer.save(community_modifiedby=self.request.user)
 
@@ -99,7 +107,11 @@ def api_community_delete_view(request,community_id):
             return Response(data=data)
         return Response(data=data)
 
-
+class api_community_create_delete_class(DestroyAPIView):
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer_ForDelete
+    lookup_field = 'pk'
+    permission_classes = [IsOwner]
 
 # -------------------------------------------------- Create View --------------------------------------------------------------------
 
@@ -107,9 +119,11 @@ class api_community_create_view_class(CreateAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer_ForCreate
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
 
     # Saves the Community Builder
     # Mixin Functions --> https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
     def perform_create(self, serializer):
         serializer.save(community_builder=self.request.user)
     # Postman still requests commmunity_builder but on the standart web link, community_builder name already exists by default.
+
