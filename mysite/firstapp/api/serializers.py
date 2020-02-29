@@ -1,16 +1,32 @@
 from rest_framework import serializers
 from firstapp.models import Community, Post_Type
 
-
-
 # Building model serializers for Community and Post Type
-class CommunitySerializer(serializers.ModelSerializer):
+
+# --------------------------------------------------  Create View Serializers  ------------------------------------------------------
+
+class CommunitySerializer_ForCreate(serializers.ModelSerializer):
     class Meta:
         model = Community 
-        fields = ["id", "community_builder", "community_name", "community_tag", "community_creation_date", "community_slug", "community_image"]
+        fields = ["community_name", "community_tag", "community_tag_wiki", "community_image"]
 
+# --------------------------------------------------  Detail View Serializers -------------------------------------------------------
 
-class Post_TypeSerializer(serializers.ModelSerializer):
+class CommunitySerializer_ForDetail(serializers.ModelSerializer):
     class Meta:
-        model = Post_Type
-        fields = ["id", "community", "post_type_title", "post_type_description", "post_type_tag", "post_type_creation_date"]
+        model = Community 
+        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image"]
+
+# --------------------------------------------------  Update View Serializers  -----------------------------------------------------
+
+class CommunitySerializer_ForUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = Community 
+        fields = ["community_name", "community_tag", "community_tag_wiki", "community_image"]
+
+# --------------------------------------------------  List/Index View Serializers -------------------------------------------------------
+
+class CommunitySerializer_ForList(serializers.ModelSerializer):
+    class Meta:
+        model = Community 
+        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image"]
