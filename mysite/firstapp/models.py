@@ -17,6 +17,7 @@ class Community(models.Model):
     community_creation_date = models.DateTimeField(editable=False, blank=True)
     community_modification_date = models.DateTimeField(editable=False, blank=True)
     community_slug = models.SlugField(max_length=150, unique=True, editable=False) 
+    community_modifiedby = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="modified_by")
     # Defining Max Length is critical as it raises "DatabaseError: value too long for type character varying(100)" if max_length not specified 
     community_image = models.ImageField(upload_to = "media/community") # To do so, pip install Pillow
 

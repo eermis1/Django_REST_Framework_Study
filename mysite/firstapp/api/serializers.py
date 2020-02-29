@@ -15,7 +15,7 @@ class CommunitySerializer_ForCreate(serializers.ModelSerializer):
 class CommunitySerializer_ForDetail(serializers.ModelSerializer):
     class Meta:
         model = Community 
-        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image"]
+        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image", "community_modifiedby"]
 
 # --------------------------------------------------  Update View Serializers  -----------------------------------------------------
 
@@ -29,4 +29,4 @@ class CommunitySerializer_ForUpdate(serializers.ModelSerializer):
 class CommunitySerializer_ForList(serializers.ModelSerializer):
     class Meta:
         model = Community 
-        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image"]
+        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image", "community_modifiedby"]

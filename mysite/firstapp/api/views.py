@@ -74,6 +74,9 @@ class api_community_update_view_class(RetrieveUpdateAPIView):
     serializer_class = CommunitySerializer_ForUpdate
     lookup_field = 'pk'
 
+    def perform_update(self, serializer):
+        serializer.save(community_modifiedby=self.request.user)
+
 
 # -------------------------------------------------- Delete View --------------------------------------------------------------------
 
