@@ -5,7 +5,7 @@ from firstapp.api.views import (
                                 api_community_detail_view_class,
                                 api_community_update_view, 
                                 api_community_update_view_class,
-                                api_community_create_delete_class,
+                                api_community_delete_class,
                                 api_community_create_view_class
                                 )
 
@@ -22,7 +22,7 @@ urlpatterns = [
      # Create View
      path("create/", api_community_create_view_class.as_view(), name="community_create"),   
      # Delete View  
-     path("delete/<pk>/", api_community_create_delete_class.as_view(), name="community_delete")
+     path("delete/<pk>/", api_community_delete_class.as_view(), name="community_delete")
 ]
 
 

@@ -3,7 +3,7 @@ from rest_framework.permissions import BasePermission
 class IsOwner(BasePermission):
 
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated 
+        return request.user and request.user.is_authenticated
 
     message = "You must be the owner of the object"
     def has_object_permission(self, request, view, obj):

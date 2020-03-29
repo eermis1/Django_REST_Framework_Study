@@ -7,8 +7,8 @@ from firstapp.models import Community, Post_Type
 
 class CommunitySerializer_ForCreate(serializers.ModelSerializer):
     class Meta:
-        model = Community 
-        fields = ["community_name", "community_tag", "community_tag_wiki", "community_image"]
+        model = Community
+        fields = ["community_name", "community_description",  "community_tag", "community_tag_wiki", "community_image"]
 
 # --------------------------------------------------  Detail View Serializers -------------------------------------------------------
 
@@ -27,9 +27,12 @@ class CommunitySerializer_ForUpdate(serializers.ModelSerializer):
 # --------------------------------------------------  List/Index View Serializers -------------------------------------------------------
 
 class CommunitySerializer_ForList(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='firstapp:community_detail_class',
+        lookup_field='pk') #Video-20 HyperLinked Identity Field
     class Meta:
         model = Community 
-        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki", "community_creation_date", "community_modification_date", "community_slug", "community_image", "community_modifiedby"]
+        fields = ["id", "community_builder", "community_name","community_description", "community_tag", "community_tag_wiki","community_slug", "url", "community_creation_date", "community_modification_date", "community_image", "community_modifiedby"]
 
 # --------------------------------------------------  Delete View Serializers -------------------------------------------------------
 

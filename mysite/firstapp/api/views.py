@@ -1,8 +1,9 @@
-from rest_framework import status 
+from rest_framework import status
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from firstapp.models import Community, Post_Type
-
+from firstapp.api.paginations import Community_Pagination
 from firstapp.api.permissions import IsOwner
 from rest_framework.permissions import (
                                         IsAuthenticated,
@@ -15,18 +16,22 @@ from rest_framework.generics import (ListAPIView,
                                      RetrieveUpdateAPIView,
                                      CreateAPIView)
 
-from firstapp.api.serializers import (CommunitySerializer_ForCreate, 
-                                      CommunitySerializer_ForDetail, 
-                                      CommunitySerializer_ForUpdate, 
+from firstapp.api.serializers import (CommunitySerializer_ForCreate,
+                                      CommunitySerializer_ForDetail,
+                                      CommunitySerializer_ForUpdate,
                                       CommunitySerializer_ForList,
                                       CommunitySerializer_ForDelete)
 
 # -------------------------------------------------- List/Index View --------------------------------------------------------------------
 
-# List of all communities, LISTAPIVIEW use case
 class api_community_list_view(ListAPIView):
     
     serializer_class = CommunitySerializer_ForList
+    pagination_class = Community_Pagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["community_name"] # How to filter id?
+    # https://stackoverflow.com/questions/11754877/troubleshooting-related-field-has-invalid-lookup-icontains buradan bulunabilir
+
     def get_queryset(self):
         communities = Community.objects.order_by("-community_creation_date")
         return communities
@@ -107,7 +112,7 @@ def api_community_delete_view(request,community_id):
             return Response(data=data)
         return Response(data=data)
 
-class api_community_create_delete_class(DestroyAPIView):
+class api_community_delete_class(DestroyAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer_ForDelete
     lookup_field = 'pk'
