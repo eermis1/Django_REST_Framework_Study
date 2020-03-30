@@ -23,7 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # REST FRAMEWORK URLS
-    path("api/firstapp/", include("firstapp.api.urls", namespace="firstapp"))
+    path("api/firstapp/", include("firstapp.api.urls", namespace="firstapp")),
+
+    # Activity Stream URLS
+    path('activity/', include('actstream.urls'))
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # Fotolar açılmıyordu, onun ayarı, Settings'e de MEDIA_URL ekledik.
 

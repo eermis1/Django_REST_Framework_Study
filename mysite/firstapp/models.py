@@ -6,7 +6,7 @@ from django.conf import settings
 import datetime
 from django.utils import timezone
 from django.utils.text import slugify
-
+from actstream import registry
 
 class Community(models.Model):
     community_builder = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -45,12 +45,14 @@ class Community(models.Model):
 
         return super(Community, self).save(*args,**kwargs)
 
-
     def __str__ (self):
-        return ("Community ID : " + str(self.id) +  "     " + "Community Name : " + self.community_name)
+        return (self.community_name)
+
+    # def __str__ (self):
+    #     return ("Community ID : " + str(self.id) +  "     " + "Community Name : " + self.community_name)
     
 class Post_Type(models.Model):
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name = "community")
     post_type_title = models.CharField(max_length=100)
     post_type_description = models.CharField(max_length=200)
     post_type_tag = models.CharField(max_length=150)
@@ -61,7 +63,9 @@ class Post_Type(models.Model):
     def get_absolute_url(self):
         return reverse('community:posttype_postobject_detail', kwargs={"pk" : self.pk})
 
-
     def __str__ (self):
-        return ("\nPost id : " + str(self.id) + "\nPost Title : " + self.post_type_title +  "\nPost Description : " + self.post_type_description +  "\nPost Tag : "  
-                + self.post_type_tag + "\nForm Field:" + "\nPost Community id : " + str(self.community))
+        return (self.post_type_title)
+
+    # def __str__ (self):
+    #     return ("\nPost id : " + str(self.id) + "\nPost Title : " + self.post_type_title +  "\nPost Description : " + self.post_type_description +  "\nPost Tag : "  
+    #             + self.post_type_tag + "\nForm Field:" + "\nPost Community id : " + str(self.community))
