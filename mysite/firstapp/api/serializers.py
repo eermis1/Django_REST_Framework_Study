@@ -8,7 +8,7 @@ from firstapp.models import Community, Post_Type
 class CommunitySerializer_ForCreate(serializers.ModelSerializer):
     class Meta:
         model = Community
-        fields = ["community_name", "community_description",  "community_tag", "community_tag_wiki", "community_image"]
+        fields = ["community_name", "community_description",  "community_tag", "community_tag_wiki"]
 
 # --------------------------------------------------  Detail View Serializers -------------------------------------------------------
 

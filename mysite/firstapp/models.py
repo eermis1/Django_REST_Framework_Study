@@ -7,6 +7,7 @@ import datetime
 from django.utils import timezone
 from django.utils.text import slugify
 from actstream import registry
+from actstream import action
 
 class Community(models.Model):
     community_builder = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -42,11 +43,11 @@ class Community(models.Model):
         # If Self.id exists then it is a modification --> modification date = timezone.now()
         self.community_modification_date = timezone.now()
         self.community_slug = self.get_slug()
-
+        # action.send(str(self.community_builder), verb="Community Has Been Created", target=self.id)
         return super(Community, self).save(*args,**kwargs)
 
     def __str__ (self):
-        return (self.community_name)
+        return self.community_name + "  " + str(self.community_builder)
 
     # def __str__ (self):
     #     return ("Community ID : " + str(self.id) +  "     " + "Community Name : " + self.community_name)

@@ -1,10 +1,16 @@
+from django.http import JsonResponse
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.mixins import ListModelMixin
 from firstapp.models import Community, Post_Type
 from firstapp.api.paginations import Community_Pagination
 from firstapp.api.permissions import IsOwner
+from actstream import action
 from rest_framework.permissions import (
                                         IsAuthenticated,
                                         IsAdminUser
@@ -25,7 +31,7 @@ from firstapp.api.serializers import (CommunitySerializer_ForCreate,
 # -------------------------------------------------- List/Index View --------------------------------------------------------------------
 
 class api_community_list_view(ListAPIView):
-    
+
     serializer_class = CommunitySerializer_ForList
     pagination_class = Community_Pagination
     filter_backends = [SearchFilter, OrderingFilter]
@@ -45,7 +51,7 @@ def api_community_detail_view(request,community_id):
     try:
         community = Community.objects.get(pk = community_id)
     except Community.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND) 
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
         serializer = CommunitySerializer_ForDetail(community)
@@ -55,7 +61,7 @@ def api_community_detail_view(request,community_id):
 class api_community_detail_view_class(RetrieveAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer_ForDetail
-    lookup_field = 'pk' # Pk has to be added to URLs as well. 
+    lookup_field = 'pk' # Pk has to be added to URLs as well.
 
 
 # -------------------------------------------------- Update View --------------------------------------------------------------------
@@ -67,13 +73,13 @@ def api_community_update_view(request,community_id):
     try:
         community = Community.objects.get(pk = community_id)
     except Community.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND) 
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "PUT":
         serializer = CommunitySerializer_ForUpdate(community, data=request.data)
         data = {} # Refers to Context in usual views.
         if serializer.is_valid():
-            serializer.save() 
+            serializer.save()
             data["success"] = "Update Successful" # We send only Update Successful after update therefore we addedd this.
             return Response(data=data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -100,7 +106,7 @@ def api_community_delete_view(request,community_id):
     try:
         community = Community.objects.get(pk = community_id)
     except Community.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND) 
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "DELETE":
         operation = Community.delete()
@@ -120,15 +126,28 @@ class api_community_delete_class(DestroyAPIView):
 
 # -------------------------------------------------- Create View --------------------------------------------------------------------
 
-class api_community_create_view_class(CreateAPIView):
+class api_community_create_view_class(CreateAPIView, RetrieveAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer_ForCreate
     lookup_field = 'pk'
     permission_classes = [IsAuthenticated]
 
+    #def get(self, request, *args, **kwargs):
+    #    return self.retrieve(request,*args, **kwargs)
+
+
+    #def get(self, request, *args, **kwargs):
+
     # Saves the Community Builder
     # Mixin Functions --> https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
     def perform_create(self, serializer):
+
         serializer.save(community_builder=self.request.user)
-    # Postman still requests commmunity_builder but on the standart web link, community_builder name already exists by default.
+
+        #community = Community.objects.get(self)
+        #def get_success_url(self):
+        #    return reverse('community_create', args=(self.object.id,))
+        #action.send(self.request.user, verb="Community Has Been Created", target=self.get_object())
+        # https://stackoverflow.com/questions/52063861/django-access-form-argument-in-createview-to-pass-to-get-success-url
+        # Postman still requests commmunity_builder but on the standart web link, community_builder name already exists by default.
 
