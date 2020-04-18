@@ -1,9 +1,10 @@
 from django.urls import path
+from actstream.feeds import CustomJSONActivityFeed
 from firstapp.api.views import (
-                                api_community_list_view, 
-                                api_community_detail_view, 
+                                api_community_list_view,
+                                api_community_detail_view,
                                 api_community_detail_view_class,
-                                api_community_update_view, 
+                                api_community_update_view,
                                 api_community_update_view_class,
                                 api_community_delete_class,
                                 api_community_create_view_class
@@ -20,10 +21,11 @@ urlpatterns = [
      path("<int:community_id>/update/", api_community_update_view, name="community_update_function"), # Test
      path("update/<pk>/", api_community_update_view_class.as_view(), name="community_update_class"), # Main Driver
      # Create View
-     path("create/", api_community_create_view_class.as_view(), name="community_create"),   
-     # Delete View  
-     path("delete/<pk>/", api_community_delete_class.as_view(), name="community_delete")
+     path("create/", api_community_create_view_class.as_view(), name="community_create"),
+     # Delete View
+     path("delete/<pk>/", api_community_delete_class.as_view(), name="community_delete"),
+
+     path('feeds/', CustomJSONActivityFeed.as_view(), name='mystream')
 ]
 
 
- 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from firstapp.models import Community, Post_Type
+from firstapp.models import Community
 
 # Building model serializers for Community and Post Type
 
