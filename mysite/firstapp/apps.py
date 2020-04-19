@@ -7,4 +7,5 @@ class FirstappConfig(AppConfig):
         from django.contrib.auth.models import User
         from actstream import registry
         registry.register(self.get_model('Community'))
+        registry.register(self.get_model('Post'))
         registry.register(User)

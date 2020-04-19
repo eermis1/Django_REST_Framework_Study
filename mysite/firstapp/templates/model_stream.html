@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Model Stream</title>
+</head>
+<body>
+
+    <p class="card-text">Ctype : {{ ctype }}</p>
+    {% for action in action_list %}
+    <p class="card-text">{{action.target_object_id}} {{action.verb}} by {{action.actor_object_id}}</p>
+    {% endfor %}
+
+</body>
+</html>
