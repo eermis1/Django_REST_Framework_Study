@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from firstapp.models import Community
-from firstapp.api.paginations import Community_Pagination
+from firstapp.models import Community, Post, Comment
+from firstapp.api.paginations import Community_Pagination, Post_Pagination, Comment_Pagination
 from firstapp.api.permissions import IsOwner
 from rest_framework.permissions import (
                                         IsAuthenticated,
@@ -20,7 +20,36 @@ from firstapp.api.serializers import (CommunitySerializer_ForCreate,
                                       CommunitySerializer_ForDetail,
                                       CommunitySerializer_ForUpdate,
                                       CommunitySerializer_ForList,
-                                      CommunitySerializer_ForDelete)
+                                      CommunitySerializer_ForDelete,
+                                      )
+
+from firstapp.api.serializers import PostSerializer_ForCreate, CommentSerializer_ForCreate, PostSerializer_ForList, CommentSerializer_ForList
+
+# -------------------------------------------------- Create View --------------------------------------------------------------------
+
+class api_community_create_view_class(CreateAPIView):
+    serializer_class = CommunitySerializer_ForCreate
+    permission_classes = [IsAuthenticated]
+
+    # Saves the Community Builder
+    # Mixin Functions --> https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
+    def perform_create(self, serializer):
+        serializer.save(community_builder=self.request.user)
+        # Postman still requests commmunity_builder but on the standart web link, community_builder name already exists by default.
+
+class api_post_create_view_class(CreateAPIView):
+    serializer_class = PostSerializer_ForCreate
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(post_builder=self.request.user)
+
+class api_comment_create_view_class(CreateAPIView):
+    serializer_class = CommentSerializer_ForCreate
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(comment_builder=self.request.user)
 
 # -------------------------------------------------- List/Index View --------------------------------------------------------------------
 
@@ -35,6 +64,28 @@ class api_community_list_view(ListAPIView):
     def get_queryset(self):
         communities = Community.objects.order_by("-community_creation_date")
         return communities
+
+class api_post_list_view(ListAPIView):
+
+    serializer_class = PostSerializer_ForList
+    pagination_class = Post_Pagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["post_name"]
+
+    def get_queryset(self):
+        posts = Post.objects.order_by("-post_creation_date")
+        return posts
+
+class api_comment_list_view(ListAPIView):
+
+    serializer_class = CommentSerializer_ForList
+    pagination_class = Comment_Pagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["comment_content"]
+
+    def get_queryset(self):
+        comments = Comment.objects.order_by("-comment_creation_date")
+        return comments
 
 # -------------------------------------------------- Detail View --------------------------------------------------------------------
 
@@ -118,15 +169,4 @@ class api_community_delete_class(DestroyAPIView):
     lookup_field = 'pk'
     permission_classes = [IsOwner]
 
-# -------------------------------------------------- Create View --------------------------------------------------------------------
-
-class api_community_create_view_class(CreateAPIView):
-    serializer_class = CommunitySerializer_ForCreate
-    permission_classes = [IsAuthenticated]
-
-    # Saves the Community Builder
-    # Mixin Functions --> https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
-    def perform_create(self, serializer):
-        serializer.save(community_builder=self.request.user)
-        # Postman still requests commmunity_builder but on the standart web link, community_builder name already exists by default.
 

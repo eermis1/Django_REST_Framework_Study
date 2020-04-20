@@ -57,7 +57,6 @@ def save_community(sender, instance, **kwargs):
 post_save.connect(save_community, sender=Community)
 
 
-
 class Post(models.Model):
     post_builder = models.ForeignKey(User, on_delete=models.PROTECT)
     post_name = models.CharField(max_length=100)
@@ -102,3 +101,32 @@ def save_post(sender, instance, **kwargs):
 
 
 post_save.connect(save_post, sender=Post)
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment_post")
+    comment_builder = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment_content = models.TextField()
+    comment_parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies")
+    comment_creation_date = models.DateTimeField(editable=False, blank=True)
+    comment_modification_date = models.DateTimeField(editable=False, blank=True)
+
+    class Meta:
+        ordering = ("comment_creation_date",)
+
+    def __str__(self):
+        return self.post.post_name + " " + self.user.username
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.comment_creation_date = timezone.now()
+
+        self.comment_modification_date = timezone.now()
+        return super(Comment, self).save(*args, **kwargs)
+
+    def children(self):
+        return Comment.objects.filter(parent=self)
+
+    @property
+    def any_children(self):
+        return Comment.objects.filter(parent=self).exists()

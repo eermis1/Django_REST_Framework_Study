@@ -8,4 +8,5 @@ class FirstappConfig(AppConfig):
         from actstream import registry
         registry.register(self.get_model('Community'))
         registry.register(self.get_model('Post'))
+        registry.register(self.get_model('Comment'))
         registry.register(User)
